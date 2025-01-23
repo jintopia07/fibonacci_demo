@@ -2,4 +2,5 @@
 
 Diaplay list fibonacci
 
-![Description of Image](/lib/images/Demo.png)
+<img src="/lib/images/Demo.png" width="50%" />
+
