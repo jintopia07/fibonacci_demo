@@ -1,29 +1,39 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter_scroll_widget/Screen/fibonacci_view.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_scroll_widget/controller/fibonacci_controller.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const FibonacciView());
+  testWidgets('List item highlights when tapped', (WidgetTester tester) async {
+    final controller = FibonacciController();
+    controller.getFibonacciNumbersWithType(41);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: FibonacciView(),
+      ),
+    ));
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    await tester.pumpAndSettle();
+
+    // ค้นหา widget ที่มีข้อความ 'Index: 0, Number: 0'
+    final textFinder = find.text('Index: 0, Number: 0');
+    expect(textFinder, findsOneWidget);
+
+    // หา ancestor ที่เป็น ListTile
+    final listTileFinder = find.ancestor(
+      of: textFinder,
+      matching: find.byType(ListTile),
+    );
+    expect(listTileFinder, findsOneWidget);
+
+    await tester.tap(listTileFinder);
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // ตรวจสอบว่าไฮไลต์ถูกต้อง
+    final listTile = tester.widget<ListTile>(listTileFinder);
+    expect(listTile.tileColor, Colors.red);
   });
 }
